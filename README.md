@@ -20,12 +20,12 @@ struct School
 };
 
 template<typename T>
-class SchoolLinkedList
+class SchoolList
 {
     Node<T>* head;
 
 public:
-    SinglyLinkedList() : head(nullptr) {}
+    SchoolList() : head(nullptr) {}
 
     void append(T data)
     {

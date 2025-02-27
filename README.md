@@ -6,65 +6,84 @@
 #include <vector>
 using namespace std;
 
-template<typename T>
 struct School
 {
-    T data;
     School* next;
-    School* name;
-    School* address;
-    School* city;
-    School* state;
-    School* county;
-    School(T val) : data(val), next(nullptr) {}
+    string  name;
+    string address;
+    string  city;
+    string  state;
+    string  county;
+    School(string name, string, address, string city, string state, string county) : next(nullptr) {}
 };
 
-template<typename T>
 class SchoolList
 {
-    Node<T>* head;
+    School* head;
 
 public:
     SchoolList() : head(nullptr) {}
-
-    void append(T data)
-    {
-        Node<T>* newNode = new Node<T>(data);
-        if(head==nullptr)
-        {
-            head = newNode;
-        }else
-        {
-            Node<T>* temp = head;
-            while(temp->next != nullptr)
-            {
-                temp = temp->next;
-            }
-            temp->next = newNode;
-        }
+void insertFirst(string name, string address, string city, string state, string county) {
+        School* newNode = new School(name, address, city, state, county);
+        newNode->next = head;
+        head = newNode;
     }
-    void printList()
-    {
-        Node<T>* temp = head;
-        while(temp!=nullptr)
-        {
-            cout << temp->data << " -> ";
+
+    void insertLast(string name, string address, string city, string state, string county) {
+        School* newNode = new School(name, address, city, state, county);
+        if (!head) {
+            head = newNode;
+            return;
+        }
+        School* temp = head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+
+    void deleteByName(string name) {
+        if (!head) return;
+
+        School* temp = head;
+        School* prev = nullptr;
+
+        while (temp && temp->name != name) {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        if (!temp) return; // Name not found
+
+        if (!prev) {
+            head = temp->next;
+        } else {
+            prev->next = temp->next;
+        }
+
+        delete temp;
+    }
+
+    School* findByName(string name) {
+        School* temp = head;
+        while (temp) {
+            if (temp->name == name) {
+                return temp;
+            }
+            temp = temp->next;
+        }
+        return nullptr;
+    }
+
+    void display() {
+        School* temp = head;
+        while (temp) {
+            cout << temp->name << " -> ";
             temp = temp->next;
         }
         cout << "nullptr" << endl;
     }
 };
-
-int main()
-{
-    SinglyLinkedList<int> list;
-    list.append(12);
-    list.append(14);
-    list.append(23);
-    list.append(-7);
-    list.append(31);
-    list.printList();
-}
 
 class CSVReader {
 public:
@@ -89,5 +108,23 @@ public:
         file.close();
         return data;
     }
+
+    int main() {
+    SchoolList list;
+    list.insertFirst("KELLAR PRIMARY SCHOOL","6413 MT HAWLEY RD","PEORIA","IL","PEORIA");
+    list.insertFirst("PLEASANT VALLEY MIDDLE SCHOOL","3314 W RICHWOODS BVD","PEORIA","IL","PEORIA")
+    list.insertLast("FRANKLIN PRIMARY SCHOOL","807 W COLUMBIA TER","PEORIA","IL","PEORIA");
+    list.display();
+
+    School* found = list.findByName("PLEASANT VALLEY MIDDLE SCHOOL");
+    if (found) {
+        cout << "Found: " << found->name << " at " << found->address << endl;
+    }
+
+    list.deleteByName("PLEASANT VALLEY MIDDLE SCHOOL");
+    list.display();
+    return 0;
+}
+
 };
 

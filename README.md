@@ -20,71 +20,122 @@ struct School {
     }
 };
 
-class SchoolList {
-    School* head;
+class SchoolBST {
+    School* root;
 
-public:
-    SchoolList() : head(nullptr) {}
-
-    void insertFirst(string name, string address, string city, string state, string county) {
-        School* newNode = new School(name, address, city, state, county);
-        newNode->next = head;
-        head = newNode;
+    School* insert(School* node, School* newSchool) {
+        if (node == nullptr) {
+            return newSchool;
+        }
+        if (newSchool->name < node->name) {
+            node->left = insert(node->left, newSchool);
+        }
+        else {
+            node->right = insert(node->right, newSchool);
+        }
+        return node;
     }
 
-    void insertLast(string name, string address, string city, string state, string county) {
-        School* newNode = new School(name, address, city, state, county);
-        if (!head) {
-            head = newNode;
-            return;
+    School* findMin(School* node) {
+        while (node->left != nullptr) {
+            node = node->left;
         }
-        School* temp = head;
-        while (temp->next) {
-            temp = temp->next;
+        return node;
+    }
+
+    School* deleteByName(School* node, string name) {
+        if (node == nullptr) {
+            return node;
         }
-        temp->next = newNode;
+        if (name < node->name) {
+            node->left = deleteByName(node->left, name);
+        }
+        else if (name > node->name) {
+            node->right = deleteByName(node->right, name);
+        }
+        else {
+            if (node->left == nullptr) {
+                School* temp = node->right;
+                delete node;
+                return temp;
+            }
+            else if (node->right == nullptr) {
+                School* temp = node->left;
+                delete node;
+                return temp;
+            }
+            School* temp = findMin(node->right);
+            node->name = temp->name;
+            node->address = temp->address;
+            node->city = temp->city;
+            node->state = temp->state;
+            node->county = temp->county;
+            node->right = deleteByName(node->right, temp->name);
+        }
+        return node;
+    }
+
+    School* findByName(School* node, string name) {
+        if (node == nullptr || node->name == name) {
+            return node;
+        }
+        if (name < node->name) {
+            return findByName(node->left, name);
+        }
+        return findByName(node->right, name);
+    }
+
+    void displayInOrder(School* node) {
+        if (node != nullptr) {
+            displayInOrder(node->left);
+            cout << node->name << " -> ";
+            displayInOrder(node->right);
+        }
+    }
+
+    void displayPreOrder(School* node) {
+        if (node != nullptr) {
+            cout << node->name << " -> ";
+            displayPreOrder(node->left);
+            displayPreOrder(node->right);
+        }
+    }
+
+    void displayPostOrder(School* node) {
+        if (node != nullptr) {
+            displayPostOrder(node->left);
+            displayPostOrder(node->right);
+            cout << node->name << " -> ";
+        }
+    }
+
+public:
+    SchoolBST() : root(nullptr) {}
+
+    void insert(School* newSchool) {
+        root = insert(root, newSchool);
     }
 
     void deleteByName(string name) {
-        if (!head) return;
-
-        School* temp = head;
-        School* prev = nullptr;
-
-        while (temp && temp->name != name) {
-            prev = temp;
-            temp = temp->next;
-        }
-
-        if (!temp) return; // Name not found
-
-        if (!prev) {
-            head = temp->next;
-        }
-        else {
-            prev->next = temp->next;
-        }
-
-        delete temp;
+        root = deleteByName(root, name);
     }
 
     School* findByName(string name) {
-        School* temp = head;
-        while (temp) {
-            if (temp->name == name) {
-                return temp;
-            }
-            temp = temp->next;
-        }
-        return nullptr;
+        return findByName(root, name);
     }
 
-    void display() {
-        School* temp = head;
-        while (temp) {
-            cout << temp->name << " -> ";
-            temp = temp->next;
-        }
+    void displayInOrder() {
+        displayInOrder(root);
+        cout << "nullptr" << endl;
+    }
+
+    void displayPreOrder() {
+        displayPreOrder(root);
+        cout << "nullptr" << endl;
+    }
+
+    void displayPostOrder() {
+        displayPostOrder(root);
         cout << "nullptr" << endl;
     }
 };
@@ -115,19 +166,35 @@ public:
 };
 
 int main() {
-    SchoolList list;
-    list.insertFirst("KELLAR PRIMARY SCHOOL", "6413 MT HAWLEY RD", "PEORIA", "IL", "PEORIA");
-    list.insertFirst("PLEASANT VALLEY MIDDLE SCHOOL", "3314 W RICHWOODS BVD", "PEORIA", "IL", "PEORIA");
-    list.insertLast("FRANKLIN PRIMARY SCHOOL", "807 W COLUMBIA TER", "PEORIA", "IL", "PEORIA");
-    list.display();
+    SchoolBST bst;
+    vector<vector<string>> data = CSVReader::readCSV("schools.csv");
 
-    School* found = list.findByName("PLEASANT VALLEY MIDDLE SCHOOL");
+    for (const auto& row : data) {
+        if (row.size() == 5) {
+            bst.insert(new School(row[0], row[1], row[2], row[3], row[4]));
+        }
+    }
+
+    cout << "In-Order Traversal:" << endl;
+    bst.displayInOrder();
+    cout << "Pre-Order Traversal:" << endl;
+    bst.displayPreOrder();
+    cout << "Post-Order Traversal:" << endl;
+    bst.displayPostOrder();
+
+    string searchName = "PLEASANT VALLEY MIDDLE SCHOOL";
+    School* found = bst.findByName(searchName);
     if (found) {
         cout << "Found: " << found->name << " at " << found->address << endl;
     }
+    else {
+        cout << "School not found." << endl;
+    }
 
-    list.deleteByName("PLEASANT VALLEY MIDDLE SCHOOL");
-    list.display();
+    bst.deleteByName(searchName);
+    cout << "After Deletion In-Order Traversal:" << endl;
+    bst.displayInOrder();
+
     return 0;
 }
 

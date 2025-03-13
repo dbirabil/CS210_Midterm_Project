@@ -4,26 +4,29 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <string>
+
 using namespace std;
 
-struct School
-{
+struct School {
     School* next;
-    string  name;
+    string name;
     string address;
-    string  city;
-    string  state;
-    string  county;
-    School(string name, string, address, string city, string state, string county) : next(nullptr) {}
+    string city;
+    string state;
+    string county;
+    School(string name, string address, string city, string state, string county)
+        : next(nullptr), name(name), address(address), city(city), state(state), county(county) {
+    }
 };
 
-class SchoolList
-{
+class SchoolList {
     School* head;
 
 public:
     SchoolList() : head(nullptr) {}
-void insertFirst(string name, string address, string city, string state, string county) {
+
+    void insertFirst(string name, string address, string city, string state, string county) {
         School* newNode = new School(name, address, city, state, county);
         newNode->next = head;
         head = newNode;
@@ -57,7 +60,8 @@ void insertFirst(string name, string address, string city, string state, string 
 
         if (!prev) {
             head = temp->next;
-        } else {
+        }
+        else {
             prev->next = temp->next;
         }
 
@@ -108,12 +112,13 @@ public:
         file.close();
         return data;
     }
+};
 
-    int main() {
+int main() {
     SchoolList list;
-    list.insertFirst("KELLAR PRIMARY SCHOOL","6413 MT HAWLEY RD","PEORIA","IL","PEORIA");
-    list.insertFirst("PLEASANT VALLEY MIDDLE SCHOOL","3314 W RICHWOODS BVD","PEORIA","IL","PEORIA")
-    list.insertLast("FRANKLIN PRIMARY SCHOOL","807 W COLUMBIA TER","PEORIA","IL","PEORIA");
+    list.insertFirst("KELLAR PRIMARY SCHOOL", "6413 MT HAWLEY RD", "PEORIA", "IL", "PEORIA");
+    list.insertFirst("PLEASANT VALLEY MIDDLE SCHOOL", "3314 W RICHWOODS BVD", "PEORIA", "IL", "PEORIA");
+    list.insertLast("FRANKLIN PRIMARY SCHOOL", "807 W COLUMBIA TER", "PEORIA", "IL", "PEORIA");
     list.display();
 
     School* found = list.findByName("PLEASANT VALLEY MIDDLE SCHOOL");
@@ -126,5 +131,4 @@ public:
     return 0;
 }
 
-};
 

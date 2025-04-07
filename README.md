@@ -139,6 +139,68 @@ public:
         cout << "nullptr" << endl;
     }
 };
+class SchoolHashTable {
+private:
+    static const int TABLE_SIZE = 100;
+    vector<list<School>> table;
+
+    int hashFunction(const string& name) {
+        return polynomialHash(name, TABLE_SIZE);
+    }
+
+public:
+    SchoolHashTable() {
+        table.resize(TABLE_SIZE);
+    }
+
+    void insert(School school) {
+        int key = hashFunction(school.name);
+        for (auto& s : table[key]) {
+            if (s.name == school.name) {
+                cout << "Duplicate found. Updating existing school.\n";
+                s = school;
+                return;
+            }
+        }
+        table[key].push_back(school);
+    }
+
+    void deleteByName(const string& name) {
+        int key = hashFunction(name);
+        auto& bucket = table[key];
+        for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+            if (it->name == name) {
+                bucket.erase(it);
+                cout << "Deleted " << name << " from hash table.\n";
+                return;
+            }
+        }
+        cout << "School not found.\n";
+    }
+
+    School* findByName(const string& name) {
+        int key = hashFunction(name);
+        for (auto& s : table[key]) {
+            if (s.name == name) {
+                return &s;
+            }
+        }
+        return nullptr;
+    }
+
+    void display() {
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+            if (!table[i].empty()) {
+                cout << "[" << i << "]: ";
+                for (const auto& s : table[i]) {
+                    cout << s.name << " -> ";
+                }
+                cout << "NULL\n";
+            }
+        }
+    }
+};
+
 
 class CSVReader {
 public:
@@ -197,5 +259,28 @@ int main() {
 
     return 0;
 }
+void loadCSV(const string& filename, SchoolHashTable& ht) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error opening file.\n";
+        return;
+    }
 
+    string line;
+    getline(file, line); // skip header
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string name, address, city, state, county;
+
+        getline(ss, name, ',');
+        getline(ss, address, ',');
+        getline(ss, city, ',');
+        getline(ss, state, ',');
+        getline(ss, county, ',');
+
+        ht.insert(School(name, address, city, state, county));
+    }
+
+    file.close();
+}
 

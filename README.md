@@ -139,6 +139,153 @@ public:
         cout << "nullptr" << endl;
     }
 };
+
+struct LinkedListNode {
+    string name;
+    LinkedListNode* next;
+
+    LinkedListNode(string name) : name(name), next(nullptr) {}
+};
+
+class LinkedList {
+    LinkedListNode* head;
+
+public:
+    LinkedList() : head(nullptr) {}
+
+    void insert(string name) {
+        LinkedListNode* newNode = new LinkedListNode(name);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    void deleteByName(string name) {
+        LinkedListNode* current = head;
+        LinkedListNode* prev = nullptr;
+
+        while (current != nullptr && current->name != name) {
+            prev = current;
+            current = current->next;
+        }
+
+        if (current == nullptr) return; // Not found
+
+        if (prev == nullptr) {
+            head = current->next;
+        }
+        else {
+            prev->next = current->next;
+        }
+
+        delete current;
+    }
+
+    LinkedListNode* searchByName(string name) {
+        LinkedListNode* current = head;
+        while (current != nullptr) {
+            if (current->name == name) {
+                return current;
+            }
+            current = current->next;
+        }
+        return nullptr;
+    }
+};
+
+class HashTable {
+    unordered_map<string, string> table;
+
+public:
+    void insert(string name) {
+        table[name] = name;
+    }
+
+    void deleteByName(string name) {
+        table.erase(name);
+    }
+
+    bool searchByName(string name) {
+        return table.find(name) != table.end();
+    }
+};
+
+int main() {
+    Timer timer;
+    LinkedList linkedList;
+    SchoolBST bst;
+    HashTable hashTable;
+
+    vector<string> names = { "Alice", "Bob", "Charlie", "David", "Eve" };
+
+    cout << "Insertion:" << endl;
+
+   
+    timer.startTimer();
+    for (const auto& name : names) {
+        linkedList.insert(name);
+    }
+    timer.stopTimer();
+    cout << "Linked List: " << timer.getDuration() << " ms" << endl;
+
+ 
+    timer.startTimer();
+    for (const auto& name : names) {
+        bst.insert(new School(name, "", "", "", ""));
+    }
+    timer.stopTimer();
+    cout << "Binary Search Tree: " << timer.getDuration() << " ms" << endl;
+
+  
+    timer.startTimer();
+    for (const auto& name : names) {
+        hashTable.insert(name);
+    }
+    timer.stopTimer();
+    cout << "Hash Table: " << timer.getDuration() << " ms" << endl;
+
+    cout << "\nSearch by Name:" << endl;
+    string searchName = "Charlie";
+
+    timer.startTimer();
+    linkedList.searchByName(searchName);
+    timer.stopTimer();
+    cout << "Linked List: " << timer.getDuration() << " ms" << endl;
+
+   
+    timer.startTimer();
+    bst.findByName(searchName);
+    timer.stopTimer();
+    cout << "Binary Search Tree: " << timer.getDuration() << " ms" << endl;
+
+   
+    timer.startTimer();
+    hashTable.searchByName(searchName);
+    timer.stopTimer();
+    cout << "Hash Table: " << timer.getDuration() << " ms" << endl;
+
+  
+    cout << "\nDeletion by Name:" << endl;
+
+    timer.startTimer();
+    linkedList.deleteByName(searchName);
+    timer.stopTimer();
+    cout << "Linked List: " << timer.getDuration() << " ms" << endl;
+
+
+    timer.startTimer();
+    bst.deleteByName(searchName);
+    timer.stopTimer();
+    cout << "Binary Search Tree: " << timer.getDuration() << " ms" << endl;
+
+
+    timer.startTimer();
+    hashTable.deleteByName(searchName);
+    timer.stopTimer();
+    cout << "Hash Table: " << timer.getDuration() << " ms" << endl;
+
+    return 0;
+}
+
 class SchoolHashTable {
 private:
     static const int TABLE_SIZE = 100;

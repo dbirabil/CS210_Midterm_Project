@@ -216,32 +216,39 @@ int main() {
     HashTable hashTable;
 
     vector<string> names = { "Alice", "Bob", "Charlie", "David", "Eve" };
+    ofstream csvFile("benchmark_results.csv");
+
+    // Write CSV headers
+    csvFile << "Operation,Data Structure,Time (ms)\n";
 
     cout << "Insertion:" << endl;
 
-   
     timer.startTimer();
     for (const auto& name : names) {
         linkedList.insert(name);
     }
     timer.stopTimer();
-    cout << "Linked List: " << timer.getDuration() << " ms" << endl;
+    double llInsertTime = timer.getDuration();
+    cout << "Linked List: " << llInsertTime << " ms" << endl;
+    csvFile << "Insertion,Linked List," << llInsertTime << "\n";
 
- 
     timer.startTimer();
     for (const auto& name : names) {
         bst.insert(new School(name, "", "", "", ""));
     }
     timer.stopTimer();
-    cout << "Binary Search Tree: " << timer.getDuration() << " ms" << endl;
+    double bstInsertTime = timer.getDuration();
+    cout << "Binary Search Tree: " << bstInsertTime << " ms" << endl;
+    csvFile << "Insertion,Binary Search Tree," << bstInsertTime << "\n";
 
-  
     timer.startTimer();
     for (const auto& name : names) {
         hashTable.insert(name);
     }
     timer.stopTimer();
-    cout << "Hash Table: " << timer.getDuration() << " ms" << endl;
+    double htInsertTime = timer.getDuration();
+    cout << "Hash Table: " << htInsertTime << " ms" << endl;
+    csvFile << "Insertion,Hash Table," << htInsertTime << "\n";
 
     cout << "\nSearch by Name:" << endl;
     string searchName = "Charlie";
@@ -249,40 +256,48 @@ int main() {
     timer.startTimer();
     linkedList.searchByName(searchName);
     timer.stopTimer();
-    cout << "Linked List: " << timer.getDuration() << " ms" << endl;
+    double llSearchTime = timer.getDuration();
+    cout << "Linked List: " << llSearchTime << " ms" << endl;
+    csvFile << "Search,Linked List," << llSearchTime << "\n";
 
-   
     timer.startTimer();
     bst.findByName(searchName);
     timer.stopTimer();
-    cout << "Binary Search Tree: " << timer.getDuration() << " ms" << endl;
+    double bstSearchTime = timer.getDuration();
+    cout << "Binary Search Tree: " << bstSearchTime << " ms" << endl;
+    csvFile << "Search,Binary Search Tree," << bstSearchTime << "\n";
 
-   
     timer.startTimer();
     hashTable.searchByName(searchName);
     timer.stopTimer();
-    cout << "Hash Table: " << timer.getDuration() << " ms" << endl;
+    double htSearchTime = timer.getDuration();
+    cout << "Hash Table: " << htSearchTime << " ms" << endl;
+    csvFile << "Search,Hash Table," << htSearchTime << "\n";
 
-  
     cout << "\nDeletion by Name:" << endl;
 
     timer.startTimer();
     linkedList.deleteByName(searchName);
     timer.stopTimer();
-    cout << "Linked List: " << timer.getDuration() << " ms" << endl;
-
+    double llDeleteTime = timer.getDuration();
+    cout << "Linked List: " << llDeleteTime << " ms" << endl;
+    csvFile << "Deletion,Linked List," << llDeleteTime << "\n";
 
     timer.startTimer();
     bst.deleteByName(searchName);
     timer.stopTimer();
-    cout << "Binary Search Tree: " << timer.getDuration() << " ms" << endl;
-
+    double bstDeleteTime = timer.getDuration();
+    cout << "Binary Search Tree: " << bstDeleteTime << " ms" << endl;
+    csvFile << "Deletion,Binary Search Tree," << bstDeleteTime << "\n";
 
     timer.startTimer();
     hashTable.deleteByName(searchName);
     timer.stopTimer();
-    cout << "Hash Table: " << timer.getDuration() << " ms" << endl;
+    double htDeleteTime = timer.getDuration();
+    cout << "Hash Table: " << htDeleteTime << " ms" << endl;
+    csvFile << "Deletion,Hash Table," << htDeleteTime << "\n";
 
+    csvFile.close();
     return 0;
 }
 
